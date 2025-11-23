@@ -1,0 +1,17 @@
+{
+    "aws_service": "lambda",
+    "gcp_service": "functions",
+    "mappings": [
+        {
+            "aws": "boto3.client('lambda')",
+            "gcp": "functions_v1.CloudFunctionsServiceClient()",
+            "imports": [
+                "from google.cloud import functions_v1"
+            ]
+        }
+    ],
+    "terraform_mappings": {
+        "aws_lambda_function": "google_cloudfunctions_function",
+        "aws_lambda_permission": "google_cloudfunctions_function_iam_member"
+    }
+}

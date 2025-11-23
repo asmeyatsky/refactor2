@@ -1,0 +1,17 @@
+{
+    "aws_service": "rds",
+    "gcp_service": "sql",
+    "mappings": [
+        {
+            "aws": "boto3.client('rds')",
+            "gcp": "sql_v1beta4.SqlInstancesServiceClient()",
+            "imports": [
+                "from google.cloud import sql_v1beta4"
+            ]
+        }
+    ],
+    "terraform_mappings": {
+        "aws_db_instance": "google_sql_database_instance",
+        "aws_db_parameter_group": "google_sql_database_flag"
+    }
+}

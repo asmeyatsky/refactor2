@@ -1,0 +1,28 @@
+{
+    "aws_service": "s3",
+    "gcp_service": "storage",
+    "mappings": [
+        {
+            "aws": "boto3.client('s3')",
+            "gcp": "storage.Client()",
+            "imports": [
+                "from google.cloud import storage"
+            ]
+        },
+        {
+            "aws": "s3.put_object",
+            "gcp": "bucket.blob(key).upload_from_string(body)"
+        },
+        {
+            "aws": "s3.upload_file",
+            "gcp": "bucket.blob(key).upload_from_filename(filename)"
+        },
+        {
+            "aws": "s3_client.upload_file",
+            "gcp": "bucket.blob(key).upload_from_filename(filename)"
+        }
+    ],
+    "terraform_mappings": {
+        "aws_s3_bucket": "google_storage_bucket"
+    }
+}

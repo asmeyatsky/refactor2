@@ -1,0 +1,112 @@
+:root {
+    --bg-color: #0a0a0a;
+    --panel-bg: #111;
+    --text-color: #eee;
+    --accent-color: #0f0;
+    --secondary-accent: #00f;
+    --alert-color: #f00;
+    --font-mono: 'Courier New', Courier, monospace;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-mono);
+    margin: 0;
+    padding: 20px;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 20px;
+}
+
+header {
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    text-shadow: 0 0 5px var(--accent-color);
+}
+
+.status-bar {
+    font-size: 0.9rem;
+}
+
+main {
+    display: flex;
+    gap: 20px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.panel {
+    background-color: var(--panel-bg);
+    border: 1px solid #333;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+#agents-panel {
+    flex: 1;
+}
+
+#logs-panel {
+    flex: 2;
+}
+
+h2 {
+    margin-top: 0;
+    border-bottom: 1px solid #333;
+    padding-bottom: 5px;
+    font-size: 1.2rem;
+    color: var(--accent-color);
+}
+
+.agent-card {
+    border: 1px solid #444;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #1a1a1a;
+}
+
+.agent-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.agent-thought {
+    color: #aaa;
+    font-style: italic;
+}
+
+#log-stream {
+    flex: 1;
+    overflow-y: auto;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.log-entry {
+    margin-bottom: 5px;
+    border-left: 2px solid transparent;
+    padding-left: 5px;
+}
+
+.log-info { border-color: #888; }
+.log-thought { border-color: var(--secondary-accent); color: #aaf; }
+.log-action { border-color: var(--accent-color); color: #afa; }
+.log-error { border-color: var(--alert-color); color: #faa; }

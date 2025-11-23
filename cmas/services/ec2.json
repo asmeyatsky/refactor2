@@ -1,0 +1,21 @@
+{
+    "aws_service": "ec2",
+    "gcp_service": "compute",
+    "mappings": [
+        {
+            "aws": "boto3.client('ec2')",
+            "gcp": "compute_v1.InstancesClient()",
+            "imports": [
+                "from google.cloud import compute_v1"
+            ]
+        },
+        {
+            "aws": "ec2.run_instances",
+            "gcp": "compute_v1.InstancesClient().insert"
+        }
+    ],
+    "terraform_mappings": {
+        "aws_instance": "google_compute_instance",
+        "aws_security_group": "google_compute_firewall"
+    }
+}

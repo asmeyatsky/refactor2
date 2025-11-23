@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMAS - Agent Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CMAS // CLOUD MIGRATION AGENT SUITE</h1>
+            <div class="status-bar">
+                <span id="system-status">SYSTEM: ONLINE</span>
+                <span id="clock">00:00:00</span>
+            </div>
+        </header>
+
+        <main>
+            <div class="panel" id="agents-panel">
+                <h2>ACTIVE AGENTS</h2>
+                <div class="agent-card" id="refactor-agent">
+                    <div class="agent-header">
+                        <span class="agent-name">REFACTOR_AGENT</span>
+                        <span class="agent-status">IDLE</span>
+                    </div>
+                    <div class="agent-thought">Waiting for input...</div>
+                </div>
+                <div class="agent-card" id="validation-agent">
+                    <div class="agent-header">
+                        <span class="agent-name">VALIDATION_AGENT</span>
+                        <span class="agent-status">IDLE</span>
+                    </div>
+                    <div class="agent-thought">Waiting for input...</div>
+                </div>
+            </div>
+
+            <div class="panel" id="logs-panel">
+                <h2>SYSTEM LOGS</h2>
+                <div id="log-stream">
+                    <!-- Logs will appear here -->
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
