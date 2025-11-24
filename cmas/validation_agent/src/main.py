@@ -72,6 +72,16 @@ class ValidationAgent(Agent):
         elif tool_name == "compare_results":
             self.memory.set("validation_success", result)
             
+            # Write report
+            import json
+            report = {
+                "success": result,
+                "aws_result": self.memory.get("aws_result").__dict__ if self.memory.get("aws_result") else None,
+                "gcp_result": self.memory.get("gcp_result").__dict__ if self.memory.get("gcp_result") else None
+            }
+            with open("validation_report.json", "w") as f:
+                json.dump(report, f, indent=2)
+            
         return result
 
 def main():

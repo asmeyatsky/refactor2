@@ -12,7 +12,13 @@ def translate_python(content: str, plugin_manager: PluginManager) -> str:
     mappings = plugin_manager.get_all_python_mappings()
 
     for aws_snippet, (gcp_snippet, gcp_imports) in mappings.items():
-        if aws_snippet in translated_content:
+        if aws_snippet.startswith("regex:"):
+            pattern = aws_snippet[6:]
+            if re.search(pattern, translated_content):
+                translated_content = re.sub(pattern, gcp_snippet, translated_content)
+                for imp in gcp_imports:
+                    imports_to_add.add(imp)
+        elif aws_snippet in translated_content:
             translated_content = translated_content.replace(aws_snippet, gcp_snippet)
             for imp in gcp_imports:
                 imports_to_add.add(imp)

@@ -11,17 +11,23 @@ def synthesize_test_case(source_code_path: str) -> str:
     filename = os.path.basename(source_code_path)
     test_content = f"""
 import unittest
-# Import the module to be tested (mocked for now)
-# import {filename.replace('.py', '')}
+import sys
+import os
+
+# Add the directory containing user_code.py to the path
+sys.path.append(os.path.dirname(os.path.abspath('{source_code_path}')))
+
+try:
+    import user_code
+except ImportError:
+    user_code = None
 
 class TestGenerated(unittest.TestCase):
-    def test_placeholder(self):
-        print("Running synthesized test for {filename}")
-        # Add actual test logic here
+    def test_import(self):
+        print("Running synthesized test for user_code.py")
+        if user_code is None:
+            self.fail("Could not import user_code")
         self.assertTrue(True)
-
-if __name__ == '__main__':
-    unittest.main()
 """
     return test_content
 

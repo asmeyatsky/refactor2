@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CMAS - Agent Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -17,6 +19,12 @@
         </header>
 
         <main>
+            <div class="panel" id="input-panel">
+                <h2>INPUT CODE</h2>
+                <textarea id="code-input" placeholder="Paste your AWS code here..."></textarea>
+                <button onclick="submitCode()">MIGRATE & VALIDATE</button>
+            </div>
+
             <div class="panel" id="agents-panel">
                 <h2>ACTIVE AGENTS</h2>
                 <div class="agent-card" id="refactor-agent">
@@ -35,6 +43,13 @@
                 </div>
             </div>
 
+            <div class="panel" id="results-panel" style="display: none;">
+                <h2>RESULTS</h2>
+                <div id="validation-status"></div>
+                <h3>Refactored Code (GCP)</h3>
+                <pre id="refactored-code"></pre>
+            </div>
+
             <div class="panel" id="logs-panel">
                 <h2>SYSTEM LOGS</h2>
                 <div id="log-stream">
@@ -45,4 +60,5 @@
     </div>
     <script src="app.js"></script>
 </body>
+
 </html>

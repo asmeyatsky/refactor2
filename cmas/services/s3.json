@@ -18,8 +18,8 @@
             "gcp": "bucket.blob(key).upload_from_filename(filename)"
         },
         {
-            "aws": "s3_client.upload_file",
-            "gcp": "bucket.blob(key).upload_from_filename(filename)"
+            "aws": "regex:self\\.s3_client\\.upload_file\\(([^,]+),\\s*([^,]+),\\s*([^)]+)\\)",
+            "gcp": "self.bucket.blob(\\3).upload_from_filename(\\1)"
         }
     ],
     "terraform_mappings": {

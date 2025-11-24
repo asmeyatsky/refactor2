@@ -58,8 +58,70 @@ main {
     flex-direction: column;
 }
 
+#input-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#code-input {
+    flex: 1;
+    background: #222;
+    color: var(--accent-color);
+    border: 1px solid #444;
+    padding: 10px;
+    font-family: var(--font-mono);
+    resize: none;
+}
+
+button {
+    background: var(--accent-color);
+    color: #000;
+    border: none;
+    padding: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: var(--font-mono);
+}
+
+button:hover {
+    background: #fff;
+}
+
 #agents-panel {
     flex: 1;
+}
+
+#results-panel {
+    flex: 2;
+    border-color: var(--accent-color);
+    flex-direction: column;
+}
+
+#refactored-code {
+    background: #111;
+    padding: 10px;
+    border: 1px solid #333;
+    color: #0f0;
+    overflow-x: auto;
+    font-size: 0.9em;
+    font-family: var(--font-mono);
+    white-space: pre-wrap;
+}
+
+#validation-status {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.status-success {
+    color: #0f0;
+}
+
+.status-fail {
+    color: #f00;
 }
 
 #logs-panel {
@@ -106,7 +168,21 @@ h2 {
     padding-left: 5px;
 }
 
-.log-info { border-color: #888; }
-.log-thought { border-color: var(--secondary-accent); color: #aaf; }
-.log-action { border-color: var(--accent-color); color: #afa; }
-.log-error { border-color: var(--alert-color); color: #faa; }
+.log-info {
+    border-color: #888;
+}
+
+.log-thought {
+    border-color: var(--secondary-accent);
+    color: #aaf;
+}
+
+.log-action {
+    border-color: var(--accent-color);
+    color: #afa;
+}
+
+.log-error {
+    border-color: var(--alert-color);
+    color: #faa;
+}
