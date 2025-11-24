@@ -27,6 +27,17 @@ class TestGenerated(unittest.TestCase):
         print("Running synthesized test for user_code.py")
         if user_code is None:
             self.fail("Could not import user_code")
+            
+        # Check if boto3 is still being used (indicates failed translation)
+        # Check if boto3 is still being used (indicates failed translation)
+        import inspect
+        source = inspect.getsource(user_code)
+        if "boto3" in source or "botocore" in source:
+            lines = source.split('\n')
+            for i, line in enumerate(lines):
+                if "boto3" in line or "botocore" in line:
+                    self.fail(f"Validation Failed: Code still contains AWS SDK references on line {i+1}: '{line.strip()}'. Translation incomplete.")
+            
         self.assertTrue(True)
 """
     return test_content

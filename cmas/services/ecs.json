@@ -1,0 +1,17 @@
+{
+    "aws_service": "ecs",
+    "gcp_service": "run",
+    "mappings": [
+        {
+            "aws": "boto3.client('ecs')",
+            "gcp": "run_v2.ServicesClient()",
+            "imports": [
+                "from google.cloud import run_v2"
+            ]
+        }
+    ],
+    "terraform_mappings": {
+        "aws_ecs_service": "google_cloud_run_service",
+        "aws_ecs_task_definition": "google_cloud_run_service"
+    }
+}

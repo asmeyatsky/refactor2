@@ -39,10 +39,10 @@ async function fetchLogs() {
 
         // Reset button if complete
         if (isComplete) {
-            const btn = document.querySelector('button');
+            const btn = document.querySelector('.input-panel .primary-btn');
             if (btn && btn.disabled) {
                 btn.disabled = false;
-                btn.innerText = "MIGRATE & VALIDATE";
+                btn.innerHTML = '<span class="btn-icon">⚡</span> MIGRATE & VALIDATE';
                 fetchResults();
             }
         }
@@ -65,9 +65,11 @@ async function fetchResults() {
 
         const statusDiv = document.getElementById('validation-status');
         if (report.success) {
-            statusDiv.innerHTML = '<span class="status-success">VALIDATION SUCCESSFUL</span>';
+            statusDiv.innerHTML = '✅ VALIDATION SUCCESSFUL';
+            statusDiv.className = 'status-success';
         } else {
-            statusDiv.innerHTML = '<span class="status-fail">VALIDATION FAILED</span>';
+            statusDiv.innerHTML = '❌ VALIDATION FAILED';
+            statusDiv.className = 'status-fail';
         }
 
         document.getElementById('results-panel').style.display = 'flex';
@@ -98,14 +100,16 @@ function updateAgentStatus(logs) {
     const validationCard = document.getElementById('validation-agent');
 
     if (refactorCard) {
-        refactorCard.querySelector('.agent-status').innerText = 'IDLE';
-        refactorCard.querySelector('.agent-status').style.color = '#666';
-        refactorCard.querySelector('.agent-thought').innerText = 'Waiting for input...';
+        const badge = refactorCard.querySelector('.agent-badge');
+        badge.innerText = 'IDLE';
+        badge.className = 'agent-badge idle';
+        refactorCard.querySelector('.agent-thought').innerText = 'Ready for task assignment...';
     }
     if (validationCard) {
-        validationCard.querySelector('.agent-status').innerText = 'IDLE';
-        validationCard.querySelector('.agent-status').style.color = '#666';
-        validationCard.querySelector('.agent-thought').innerText = 'Waiting for input...';
+        const badge = validationCard.querySelector('.agent-badge');
+        badge.innerText = 'IDLE';
+        badge.className = 'agent-badge idle';
+        validationCard.querySelector('.agent-thought').innerText = 'Ready for task assignment...';
     }
 
     // Check recent activity
@@ -123,12 +127,14 @@ function updateAgentStatus(logs) {
     });
 
     if (refactorActive && refactorCard) {
-        refactorCard.querySelector('.agent-status').innerText = 'ACTIVE';
-        refactorCard.querySelector('.agent-status').style.color = '#0f0';
+        const badge = refactorCard.querySelector('.agent-badge');
+        badge.innerText = 'ACTIVE';
+        badge.className = 'agent-badge active';
     }
     if (validationActive && validationCard) {
-        validationCard.querySelector('.agent-status').innerText = 'ACTIVE';
-        validationCard.querySelector('.agent-status').style.color = '#0f0';
+        const badge = validationCard.querySelector('.agent-badge');
+        badge.innerText = 'ACTIVE';
+        badge.className = 'agent-badge active';
     }
 }
 
@@ -136,9 +142,10 @@ async function submitCode() {
     const code = document.getElementById('code-input').value;
     if (!code) return;
 
-    const btn = document.querySelector('button');
+    const btn = document.querySelector('.input-panel .primary-btn');
+    const originalText = btn.innerHTML;
     btn.disabled = true;
-    btn.innerText = "PROCESSING...";
+    btn.innerHTML = '<span class="btn-icon">⏳</span> PROCESSING...';
 
     try {
         await fetch('/api/submit', {
@@ -148,9 +155,31 @@ async function submitCode() {
         });
     } catch (e) {
         console.error("Failed to submit code", e);
-        btn.innerText = "ERROR";
+        btn.innerHTML = '<span class="btn-icon">❌</span> ERROR';
         btn.disabled = false;
     }
+}
+
+function clearInput() {
+    document.getElementById('code-input').value = '';
+}
+
+function clearResults() {
+    document.getElementById('refactored-code').innerText = 'Migrated code will appear here...';
+    document.getElementById('refactored-code').innerHTML = '<span class="placeholder-text">Migrated code will appear here...</span>';
+    document.getElementById('validation-status').innerHTML = '';
+}
+
+function copyCode() {
+    const code = document.getElementById('refactored-code').innerText;
+    navigator.clipboard.writeText(code).then(() => {
+        const btn = document.querySelector('.results-panel .primary-btn');
+        const originalText = btn.innerText;
+        btn.innerText = "COPIED!";
+        setTimeout(() => {
+            btn.innerText = originalText;
+        }, 2000);
+    });
 }
 
 // Poll logs every 1 second

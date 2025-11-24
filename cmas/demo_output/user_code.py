@@ -1,101 +1,128 @@
-import logging
+# [WARNING] Untranslated AWS SDK references detected. Please check mappings.
 import boto3
-from botocore.exceptions import ClientError
-import os
+import json
 
-class S3Manager:
-    def __init__(self, region_name='us-east-1'):
-        """Initialize the S3 client."""
-        self.s3_client = boto3.client('s3', region_name=region_name)
-        self.region = region_name
+# --- CONFIGURATION ---
+REGION = 'YOUR_REGION'  # e.g., 'us-east-1'
+ACCOUNT_ID = 'YOUR_ACCOUNT_ID' # e.g., '123456789012'
+BUCKET_NAME = 'YOUR_BUCKET_NAME' # Must be globally unique
+TOPIC_NAME = 'S3ObjectCreationTopic'
+QUEUE_NAME = 'S3ProcessingQueue'
 
-    def create_bucket(self, bucket_name):
-        """Create an S3 bucket in a specified region."""
-        try:
-            if self.region == 'us-east-1':
-                self.s3_client.create_bucket(Bucket=bucket_name)
-            else:
-                location = {'LocationConstraint': self.region}
-                self.s3_client.create_bucket(Bucket=bucket_name, CreateBucketConfiguration=location)
-            
-            print(f"✅ Bucket '{bucket_name}' created successfully.")
-            return True
-        except ClientError as e:
-            logging.error(e)
-            return False
+# --- BOTO3 CLIENTS ---
+s3_client = boto3.client('s3', region_name=REGION)
+sns_client = boto3.client('sns', region_name=REGION)
+sqs_client = boto3.client('sqs', region_name=REGION)
 
-    def upload_file(self, file_name, bucket, object_name=None):
-        """
-        Upload a file to an S3 bucket.
-        :param file_name: File to upload (local path)
-        :param bucket: Bucket to upload to
-        :param object_name: S3 object name. If not specified then file_name is used
-        """
-        # If S3 object_name was not specified, use file_name
-        if object_name is None:
-            object_name = os.path.basename(file_name)
+# ARNs will be determined after creation
+SQS_ARN = f'arn:aws:sqs:{REGION}:{ACCOUNT_ID}:{QUEUE_NAME}'
+SNS_ARN = f'arn:aws:sns:{REGION}:{ACCOUNT_ID}:{TOPIC_NAME}'
 
-        try:
-            self.bucket.blob(object_name).upload_from_filename(file_name)
-            print(f"✅ Uploaded '{file_name}' to '{bucket}/{object_name}'")
-            return True
-        except ClientError as e:
-            logging.error(e)
-            return False
+print("Starting AWS Resource Setup...")
 
-    def download_file(self, bucket, object_name, file_name):
-        """Download a file from S3 to local path."""
-        try:
-            self.s3_client.download_file(bucket, object_name, file_name)
-            print(f"✅ Downloaded '{object_name}' from '{bucket}' to '{file_name}'")
-            return True
-        except ClientError as e:
-            if e.response['Error']['Code'] == "404":
-                print("❌ The object does not exist.")
-            else:
-                logging.error(e)
-            return False
+### 1. CREATE SQS QUEUE AND GET URL/ARN ###
+# SQS Queue is created first
+try:
+    sqs_response = sqs_client.create_subscription(name=sqs_client.subscription_path("your-project-id", QUEUE_NAME), topic="projects/your-project-id/topics/my-topic")
+    QUEUE_URL = sqs_response['QueueUrl']
+    print(f"1. SQS Queue created: {QUEUE_URL}")
+except Exception as e:
+    print(f"1. SQS Queue creation failed: {e}")
 
-    def list_files(self, bucket):
-        """List all files (objects) in an S3 bucket."""
-        try:
-            response = self.s3_client.list_objects_v2(Bucket=bucket)
-            
-            print(f"\n📂 Files in bucket '{bucket}':")
-            if 'Contents' in response:
-                for obj in response['Contents']:
-                    print(f" - {obj['Key']} (Size: {obj['Size']} bytes)")
-            else:
-                print(" - Bucket is empty.")
-                
-        except ClientError as e:
-            logging.error(e)
+### 2. CREATE SNS TOPIC ###
+try:
+    sns_response = sns_client.create_topic(request={"name": sns_client.topic_path("my-gcp-project", TOPIC_NAME)})
+    TOPIC_ARN = sns_response['TopicArn']
+    print(f"2. SNS Topic created: {TOPIC_ARN}")
+except Exception as e:
+    print(f"2. SNS Topic creation failed: {e}")
+    TOPIC_ARN = SNS_ARN # Use placeholder ARN if creation failed
 
-# --- Usage Example ---
-if __name__ == "__main__":
-    # Configuration
-    BUCKET_NAME = "my-unique-bucket-name-12345" # Must be globally unique
-    FILE_TO_UPLOAD = "test.txt"
+### 3. SET SQS QUEUE POLICY (Allow SNS to publish to SQS) ###
+sqs_policy = {
+    "Version": "2012-10-17",
+    "Id": f"{SQS_ARN}/SQSDefaultPolicy",
+    "Statement": [
+        {
+            "Sid": "AllowSNSPublish",
+            "Effect": "Allow",
+            "Principal": {"Service": "sns.amazonaws.com"},
+            "Action": "sqs:SendMessage",
+            "Resource": SQS_ARN,
+            "Condition": {"ArnEquals": {"aws:SourceArn": TOPIC_ARN}}
+        }
+    ]
+}
+
+try:
+    sqs_client.set_queue_attributes(
+        QueueUrl=QUEUE_URL,
+        Attributes={'Policy': json.dumps(sqs_policy)}
+    )
+    print("3. SQS Policy set: Allowed SNS to publish messages.")
+except Exception as e:
+    print(f"3. Failed to set SQS Policy: {e}")
+
+
+### 4. SUBSCRIBE SQS QUEUE TO SNS TOPIC ###
+try:
+    sns_client.subscribe(
+        TopicArn=TOPIC_ARN,
+        Protocol='sqs',
+        Endpoint=SQS_ARN
+    )
+    print("4. SQS subscribed to SNS Topic.")
+except Exception as e:
+    print(f"4. Failed to subscribe SQS to SNS: {e}")
+
+### 5. SET SNS TOPIC POLICY (Allow S3 to publish to SNS) ###
+sns_policy = {
+    "Version": "2012-10-17",
+    "Id": "__default_policy_ID",
+    "Statement": [
+        {
+            "Sid": "AllowS3Publish",
+            "Effect": "Allow",
+            "Principal": {"Service": "s3.amazonaws.com"},
+            "Action": "SNS:Publish",
+            "Resource": TOPIC_ARN,
+            "Condition": {"ArnLike": {"aws:SourceArn": f"arn:aws:s3:::{BUCKET_NAME}"}}
+        }
+    ]
+}
+
+try:
+    sns_client.set_topic_attributes(
+        TopicArn=TOPIC_ARN,
+        AttributeName='Policy',
+        AttributeValue=json.dumps(sns_policy)
+    )
+    print("5. SNS Policy set: Allowed S3 to publish events.")
+except Exception as e:
+    print(f"5. Failed to set SNS Topic Policy: {e}")
+
+### 6. CONFIGURE S3 EVENT NOTIFICATION ###
+# This step links S3 events to the SNS topic
+notification_config = {
+    'TopicConfigurations': [
+        {
+            'Id': 'S3ObjectCreatedNotification',
+            'TopicArn': TOPIC_ARN,
+            'Events': ['s3:ObjectCreated:*'] # Trigger on any object creation
+        }
+    ]
+}
+
+try:
+    # Ensure the bucket exists first (uncomment the line below if you need to create it)
+    # s3_client.create_bucket(Bucket=BUCKET_NAME, CreateBucketConfiguration={'LocationConstraint': REGION})
     
-    # Create a dummy file for testing
-    with open(FILE_TO_UPLOAD, "w") as f:
-        f.write("Hello S3!")
+    s3_client.put_bucket_notification_configuration(
+        Bucket=BUCKET_NAME,
+        NotificationConfiguration=notification_config
+    )
+    print("6. S3 Event Notification configured successfully!")
+except Exception as e:
+    print(f"6. S3 Notification configuration failed. Ensure bucket exists and IAM permissions are correct: {e}")
 
-    # Initialize Manager
-    s3 = S3Manager(region_name='us-east-1')
-
-    # 1. Create Bucket
-    s3.create_bucket(BUCKET_NAME)
-
-    # 2. Upload File
-    bucket.blob(key).upload_from_filename(filename)(FILE_TO_UPLOAD, BUCKET_NAME)
-
-    # 3. List Files
-    s3.list_files(BUCKET_NAME)
-
-    # 4. Download File (as a new name)
-    s3.download_file(BUCKET_NAME, "test.txt", "downloaded_test.txt")
-    
-    # Clean up local files
-    # os.remove(FILE_TO_UPLOAD)
-    # os.remove("downloaded_test.txt")
+print("\nSetup complete. You can now upload a file to the S3 bucket to test the flow.")

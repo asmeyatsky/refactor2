@@ -1,0 +1,28 @@
+{
+    "aws_service": "dynamodb",
+    "gcp_service": "firestore",
+    "mappings": [
+        {
+            "aws": "boto3.resource('dynamodb')",
+            "gcp": "firestore.Client()",
+            "imports": [
+                "from google.cloud import firestore"
+            ]
+        },
+        {
+            "aws": "regex:([a-zA-Z0-9_]+)\\.Table\\(([^)]+)\\)",
+            "gcp": "\\1.collection(\\2)"
+        },
+        {
+            "aws": "regex:([a-zA-Z0-9_]+)\\.put_item\\(Item=([^)]+)\\)",
+            "gcp": "\\1.add(\\2)"
+        },
+        {
+            "aws": "regex:([a-zA-Z0-9_]+)\\.get_item\\(Key=([^)]+)\\)",
+            "gcp": "\\1.document(\\2['id']).get()"
+        }
+    ],
+    "terraform_mappings": {
+        "aws_dynamodb_table": "google_firestore_document"
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "aws_service": "elasticache",
+    "gcp_service": "redis",
+    "mappings": [
+        {
+            "aws": "boto3.client('elasticache')",
+            "gcp": "redis_v1.CloudRedisClient()",
+            "imports": [
+                "from google.cloud import redis_v1"
+            ]
+        }
+    ],
+    "terraform_mappings": {
+        "aws_elasticache_cluster": "google_redis_instance",
+        "aws_elasticache_replication_group": "google_redis_instance"
+    }
+}

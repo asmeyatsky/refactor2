@@ -1,0 +1,20 @@
+{
+    "aws_service": "redshift",
+    "gcp_service": "bigquery",
+    "mappings": [
+        {
+            "aws": "boto3.client('redshift-data')",
+            "gcp": "bigquery.Client()",
+            "imports": [
+                "from google.cloud import bigquery"
+            ]
+        },
+        {
+            "aws": "regex:([a-zA-Z0-9_]+)\\.execute_statement\\(Sql=([^)]+)\\)",
+            "gcp": "\\1.query(\\2)"
+        }
+    ],
+    "terraform_mappings": {
+        "aws_redshift_cluster": "google_bigquery_dataset"
+    }
+}

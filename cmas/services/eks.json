@@ -1,0 +1,17 @@
+{
+    "aws_service": "eks",
+    "gcp_service": "container",
+    "mappings": [
+        {
+            "aws": "boto3.client('eks')",
+            "gcp": "container_v1.ClusterManagerClient()",
+            "imports": [
+                "from google.cloud import container_v1"
+            ]
+        }
+    ],
+    "terraform_mappings": {
+        "aws_eks_cluster": "google_container_cluster",
+        "aws_eks_node_group": "google_container_node_pool"
+    }
+}

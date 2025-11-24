@@ -15,6 +15,11 @@ def translate_python(content: str, plugin_manager: PluginManager) -> str:
         if aws_snippet.startswith("regex:"):
             pattern = aws_snippet[6:]
             if re.search(pattern, translated_content):
+                # Special handling for SNS topic creation which needs project ID
+                if "topic_path" in gcp_snippet:
+                     # In a real agent this would be configurable, hardcoding for demo
+                     gcp_snippet = gcp_snippet.replace("your-project-id", "my-gcp-project")
+                
                 translated_content = re.sub(pattern, gcp_snippet, translated_content)
                 for imp in gcp_imports:
                     imports_to_add.add(imp)
@@ -26,6 +31,10 @@ def translate_python(content: str, plugin_manager: PluginManager) -> str:
     if imports_to_add:
         import_block = "\n".join(imports_to_add) + "\n"
         translated_content = import_block + translated_content
+
+    if "boto3" in translated_content or "botocore" in translated_content:
+        warning = "# [WARNING] Untranslated AWS SDK references detected. Please check mappings.\n"
+        translated_content = warning + translated_content
 
     return translated_content
 

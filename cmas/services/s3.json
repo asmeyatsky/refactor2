@@ -3,7 +3,7 @@
     "gcp_service": "storage",
     "mappings": [
         {
-            "aws": "boto3.client('s3')",
+            "aws": "regex:boto3\\.client\\('s3'.*?\\)",
             "gcp": "storage.Client()",
             "imports": [
                 "from google.cloud import storage"
@@ -20,6 +20,10 @@
         {
             "aws": "regex:self\\.s3_client\\.upload_file\\(([^,]+),\\s*([^,]+),\\s*([^)]+)\\)",
             "gcp": "self.bucket.blob(\\3).upload_from_filename(\\1)"
+        },
+        {
+            "aws": "regex:([a-zA-Z0-9_]+)\\.put_bucket_notification_configuration\\(.*?\\)",
+            "gcp": "# [Action Required] Configure GCS Pub/Sub notifications: gsutil notification create -t [TOPIC] -f json gs://[BUCKET]"
         }
     ],
     "terraform_mappings": {

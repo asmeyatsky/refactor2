@@ -1,0 +1,17 @@
+{
+    "aws_service": "glue",
+    "gcp_service": "dataflow",
+    "mappings": [
+        {
+            "aws": "boto3.client('glue')",
+            "gcp": "dataflow_v1beta3.JobsV1Beta3Client()",
+            "imports": [
+                "from google.cloud import dataflow_v1beta3"
+            ]
+        }
+    ],
+    "terraform_mappings": {
+        "aws_glue_job": "google_dataflow_job",
+        "aws_glue_crawler": "google_dataflow_job"
+    }
+}

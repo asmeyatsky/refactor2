@@ -1,0 +1,32 @@
+{
+    "aws_service": "sqs",
+    "gcp_service": "pubsub",
+    "mappings": [
+        {
+            "aws": "regex:boto3\\.client\\('sqs'.*?\\)",
+            "gcp": "pubsub_v1.SubscriberClient()",
+            "imports": [
+                "from google.cloud import pubsub_v1"
+            ]
+        },
+        {
+            "aws": "regex:([a-zA-Z0-9_]+)\\.create_queue\\(QueueName=([^)]+)\\)",
+            "gcp": "\\1.create_subscription(name=\\1.subscription_path(\"your-project-id\", \\2), topic=\"projects/your-project-id/topics/my-topic\")"
+        },
+        {
+            "aws": "regex:([a-zA-Z0-9_]+)\\.send_message\\(QueueUrl=([^,]+), MessageBody=([^)]+)\\)",
+            "gcp": "pubsub_v1.PublisherClient().publish(topic=\\2, data=\\3.encode(\"utf-8\"))"
+        },
+        {
+            "aws": "regex:([a-zA-Z0-9_]+)\\.receive_message\\(QueueUrl=([^)]+)\\)",
+            "gcp": "\\1.pull(subscription=\\2, max_messages=1)"
+        },
+        {
+            "aws": "regex:([a-zA-Z0-9_]+)\\.set_queue_attributes\\(.*?\\)",
+            "gcp": "# [Action Required] Configure Pub/Sub subscription IAM policy manually or via Terraform"
+        }
+    ],
+    "terraform_mappings": {
+        "aws_sqs_queue": "google_pubsub_subscription"
+    }
+}

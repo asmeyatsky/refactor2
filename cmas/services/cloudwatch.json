@@ -1,0 +1,21 @@
+{
+    "aws_service": "cloudwatch",
+    "gcp_service": "monitoring",
+    "mappings": [
+        {
+            "aws": "boto3.client('cloudwatch')",
+            "gcp": "monitoring_v3.MetricServiceClient()",
+            "imports": [
+                "from google.cloud import monitoring_v3"
+            ]
+        },
+        {
+            "aws": "regex:([a-zA-Z0-9_]+)\\.put_metric_data\\(Namespace=([^,]+), MetricData=([^)]+)\\)",
+            "gcp": "\\1.create_time_series(name='projects/my-project', time_series=\\3)"
+        }
+    ],
+    "terraform_mappings": {
+        "aws_cloudwatch_metric_alarm": "google_monitoring_alert_policy",
+        "aws_cloudwatch_log_group": "google_logging_project_sink"
+    }
+}

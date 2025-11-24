@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "aws_result": {
+    "environment": "AWS",
+    "output": "",
+    "status_code": 1,
+    "latency_ms": 1256.6819190979004,
+    "error": "Traceback (most recent call last):\n  File \"/Users/allansmeyatsky/refactor2/tests/test_user_code.py\", line 10, in <module>\n    import user_code\n  File \"/Users/allansmeyatsky/refactor2/cmas/demo_input/user_code.py\", line 12, in <module>\n    s3_client = boto3.client('s3', region_name=REGION)\n  File \"/usr/local/lib/python3.14/site-packages/boto3/__init__.py\", line 93, in client\n    return _get_default_session().client(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.14/site-packages/boto3/session.py\", line 337, in client\n    return self._session.create_client(\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^\n        service_name, **create_client_kwargs\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/usr/local/lib/python3.14/site-packages/botocore/context.py\", line 123, in wrapper\n    return func(*args, **kwargs)\n  File \"/usr/local/lib/python3.14/site-packages/botocore/session.py\", line 944, in create_client\n    region_name = self._resolve_region_name(region_name, config)\n  File \"/usr/local/lib/python3.14/site-packages/botocore/session.py\", line 1058, in _resolve_region_name\n    validate_region_name(region_name)\n    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.14/site-packages/botocore/utils.py\", line 1341, in validate_region_name\n    raise InvalidRegionError(region_name=region_name)\nbotocore.exceptions.InvalidRegionError: Provided region_name 'YOUR_REGION' doesn't match a supported format.\n"
+  },
+  "gcp_result": {
+    "environment": "GCP",
+    "output": "",
+    "status_code": 1,
+    "latency_ms": 971.6181755065918,
+    "error": "Traceback (most recent call last):\n  File \"/Users/allansmeyatsky/refactor2/tests/test_user_code.py\", line 10, in <module>\n    import user_code\n  File \"/Users/allansmeyatsky/refactor2/cmas/demo_input/user_code.py\", line 12, in <module>\n    s3_client = boto3.client('s3', region_name=REGION)\n  File \"/usr/local/lib/python3.14/site-packages/boto3/__init__.py\", line 93, in client\n    return _get_default_session().client(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.14/site-packages/boto3/session.py\", line 337, in client\n    return self._session.create_client(\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^\n        service_name, **create_client_kwargs\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/usr/local/lib/python3.14/site-packages/botocore/context.py\", line 123, in wrapper\n    return func(*args, **kwargs)\n  File \"/usr/local/lib/python3.14/site-packages/botocore/session.py\", line 944, in create_client\n    region_name = self._resolve_region_name(region_name, config)\n  File \"/usr/local/lib/python3.14/site-packages/botocore/session.py\", line 1058, in _resolve_region_name\n    validate_region_name(region_name)\n    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.14/site-packages/botocore/utils.py\", line 1341, in validate_region_name\n    raise InvalidRegionError(region_name=region_name)\nbotocore.exceptions.InvalidRegionError: Provided region_name 'YOUR_REGION' doesn't match a supported format.\n"
+  }
+}

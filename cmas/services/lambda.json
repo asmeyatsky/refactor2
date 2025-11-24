@@ -8,10 +8,23 @@
             "imports": [
                 "from google.cloud import functions_v1"
             ]
+        },
+        {
+            "aws": "regex:([a-zA-Z0-9_]+)\\.create_function\\(FunctionName=([^,]+), Runtime=([^,]+), Role=([^,]+), Handler=([^,]+), Code=([^)]+)\\)",
+            "gcp": "\\1.create_function(request={'parent': 'projects/my-project/locations/us-central1', 'function': {'name': \\2, 'runtime': \\3, 'entry_point': \\5, 'source_archive_url': \\6['S3Bucket'] + '/' + \\6['S3Key']}})"
+        },
+        {
+            "aws": "regex:([a-zA-Z0-9_]+)\\.invoke\\(FunctionName=([^,]+), Payload=([^)]+)\\)",
+            "gcp": "\\1.call_function(name=\\2, data=\\3)"
+        },
+        {
+            "aws": "regex:([a-zA-Z0-9_]+)\\.add_permission\\(FunctionName=([^,]+), StatementId=([^,]+), Action='lambda:InvokeFunction', Principal=([^)]+)\\)",
+            "gcp": "\\1.set_iam_policy(resource=\\2, policy={'bindings': [{'role': 'roles/cloudfunctions.invoker', 'members': [\\4]}]})"
         }
     ],
     "terraform_mappings": {
         "aws_lambda_function": "google_cloudfunctions_function",
-        "aws_lambda_permission": "google_cloudfunctions_function_iam_member"
+        "aws_lambda_permission": "google_cloudfunctions_function_iam_member",
+        "aws_lambda_event_source_mapping": "google_cloudfunctions_function_event_trigger"
     }
 }

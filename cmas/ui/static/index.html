@@ -4,61 +4,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CMAS - Agent Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+    <title>CMAS - Cloud Migration Agent Suite</title>
+    <link rel="stylesheet" href="style.css?v=2">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
-    <div class="container">
+    <div class="app-container">
         <header>
-            <h1>CMAS // CLOUD MIGRATION AGENT SUITE</h1>
+            <div class="header-left">
+                <div class="logo-icon"></div>
+                <h1>CMAS <span class="subtitle">Cloud Migration Agent Suite</span></h1>
+            </div>
             <div class="status-bar">
-                <span id="system-status">SYSTEM: ONLINE</span>
-                <span id="clock">00:00:00</span>
+                <div class="status-item"><span class="status-dot online"></span> SYSTEM ONLINE</div>
+                <div class="status-item" id="clock">00:00:00</div>
             </div>
         </header>
 
-        <main>
-            <div class="panel" id="input-panel">
-                <h2>INPUT CODE</h2>
-                <textarea id="code-input" placeholder="Paste your AWS code here..."></textarea>
-                <button onclick="submitCode()">MIGRATE & VALIDATE</button>
-            </div>
-
-            <div class="panel" id="agents-panel">
-                <h2>ACTIVE AGENTS</h2>
-                <div class="agent-card" id="refactor-agent">
-                    <div class="agent-header">
-                        <span class="agent-name">REFACTOR_AGENT</span>
-                        <span class="agent-status">IDLE</span>
+        <main class="split-view">
+            <!-- LEFT PANEL: INPUT & AGENTS -->
+            <section class="left-pane">
+                <div class="panel input-panel">
+                    <div class="panel-header">
+                        <h2><span class="icon">📥</span> AWS SOURCE CODE</h2>
                     </div>
-                    <div class="agent-thought">Waiting for input...</div>
-                </div>
-                <div class="agent-card" id="validation-agent">
-                    <div class="agent-header">
-                        <span class="agent-name">VALIDATION_AGENT</span>
-                        <span class="agent-status">IDLE</span>
+                    <div class="panel-content">
+                        <textarea id="code-input"
+                            placeholder="Paste your AWS Python (Boto3) or Terraform code here..."></textarea>
                     </div>
-                    <div class="agent-thought">Waiting for input...</div>
+                    <div class="panel-footer">
+                        <button class="primary-btn" onclick="submitCode()">
+                            <span class="btn-icon">⚡</span> MIGRATE & VALIDATE
+                        </button>
+                        <button class="secondary-btn" onclick="clearInput()">CLEAR</button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="panel" id="results-panel" style="display: none;">
-                <h2>RESULTS</h2>
-                <div id="validation-status"></div>
-                <h3>Refactored Code (GCP)</h3>
-                <pre id="refactored-code"></pre>
-            </div>
-
-            <div class="panel" id="logs-panel">
-                <h2>SYSTEM LOGS</h2>
-                <div id="log-stream">
-                    <!-- Logs will appear here -->
+                <div class="panel agents-panel">
+                    <div class="panel-header">
+                        <h2><span class="icon">🤖</span> ACTIVE AGENTS</h2>
+                    </div>
+                    <div class="agents-grid">
+                        <div class="agent-card" id="refactor-agent">
+                            <div class="agent-header">
+                                <span class="agent-name">REFACTOR AGENT</span>
+                                <span class="agent-badge idle">IDLE</span>
+                            </div>
+                            <div class="agent-thought">Ready for task assignment...</div>
+                        </div>
+                        <div class="agent-card" id="validation-agent">
+                            <div class="agent-header">
+                                <span class="agent-name">VALIDATION AGENT</span>
+                                <span class="agent-badge idle">IDLE</span>
+                            </div>
+                            <div class="agent-thought">Ready for task assignment...</div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </section>
+
+            <!-- RIGHT PANEL: RESULTS -->
+            <section class="right-pane">
+                <div class="panel results-panel" id="results-panel">
+                    <div class="panel-header">
+                        <h2><span class="icon">🚀</span> GCP MIGRATED CODE</h2>
+                        <div id="validation-status"></div>
+                    </div>
+                    <div class="panel-content">
+                        <div class="code-viewer">
+                            <pre
+                                id="refactored-code"><span class="placeholder-text">Migrated code will appear here...</span></pre>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button class="primary-btn" onclick="copyCode()">COPY CODE</button>
+                        <button class="secondary-btn" onclick="clearResults()">CLEAR</button>
+                    </div>
+                </div>
+            </section>
         </main>
+
+        <!-- BOTTOM PANEL: LOGS -->
+        <footer class="logs-panel">
+            <div class="panel-header">
+                <h2><span class="icon">📟</span> SYSTEM LOGS</h2>
+                <div class="log-controls">
+                    <span class="log-status">LIVE STREAMING</span>
+                </div>
+            </div>
+            <div id="log-stream" class="log-content">
+                <!-- Logs will appear here -->
+            </div>
+        </footer>
     </div>
-    <script src="app.js"></script>
+    <script src="app.js?v=2"></script>
 </body>
 
 </html>

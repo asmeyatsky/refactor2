@@ -1,0 +1,20 @@
+{
+    "aws_service": "kinesis",
+    "gcp_service": "pubsub",
+    "mappings": [
+        {
+            "aws": "boto3.client('kinesis')",
+            "gcp": "pubsub_v1.PublisherClient()",
+            "imports": [
+                "from google.cloud import pubsub_v1"
+            ]
+        },
+        {
+            "aws": "regex:([a-zA-Z0-9_]+)\\.put_record\\(StreamName=([^,]+), Data=([^,]+), PartitionKey=([^)]+)\\)",
+            "gcp": "\\1.publish(topic=\\2, data=\\3, ordering_key=\\4)"
+        }
+    ],
+    "terraform_mappings": {
+        "aws_kinesis_stream": "google_pubsub_topic"
+    }
+}

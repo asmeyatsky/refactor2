@@ -1,0 +1,17 @@
+{
+    "aws_service": "route53",
+    "gcp_service": "dns",
+    "mappings": [
+        {
+            "aws": "boto3.client('route53')",
+            "gcp": "dns.Client()",
+            "imports": [
+                "from google.cloud import dns"
+            ]
+        }
+    ],
+    "terraform_mappings": {
+        "aws_route53_zone": "google_dns_managed_zone",
+        "aws_route53_record": "google_dns_record_set"
+    }
+}

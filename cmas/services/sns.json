@@ -1,0 +1,33 @@
+{
+    "aws_service": "sns",
+    "gcp_service": "pubsub",
+    "mappings": [
+        {
+            "aws": "regex:boto3\\.client\\('sns'.*?\\)",
+            "gcp": "pubsub_v1.PublisherClient()",
+            "imports": [
+                "from google.cloud import pubsub_v1"
+            ]
+        },
+        {
+            "aws": "regex:([a-zA-Z0-9_]+)\\.create_topic\\(Name=([^)]+)\\)",
+            "gcp": "\\1.create_topic(request={\"name\": \\1.topic_path(\"your-project-id\", \\2)})"
+        },
+        {
+            "aws": "regex:([a-zA-Z0-9_]+)\\.publish\\(TopicArn=([^,]+), Message=([^)]+)\\)",
+            "gcp": "\\1.publish(topic=\\2, data=\\3.encode(\"utf-8\"))"
+        },
+        {
+            "aws": "regex:([a-zA-Z0-9_]+)\\.subscribe\\(.*?\\)",
+            "gcp": "# [Action Required] Create Pub/Sub subscription for this topic"
+        },
+        {
+            "aws": "regex:([a-zA-Z0-9_]+)\\.set_topic_attributes\\(.*?\\)",
+            "gcp": "# [Action Required] Configure Pub/Sub topic IAM policy"
+        }
+    ],
+    "terraform_mappings": {
+        "aws_sns_topic": "google_pubsub_topic",
+        "aws_sns_topic_subscription": "google_pubsub_subscription"
+    }
+}
